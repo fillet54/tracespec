@@ -1,0 +1,11 @@
+record_id,requirement_id,requirement_text,notes
+REC_001,SYSAUTH00001,"The system shall [SYSAUTH00001] authenticate all users before granting access to any functionality.",Initial authentication requirement - basic login
+REC_002,SYSAUTH00002,"The system shall [SYSAUTH00002] log all authentication attempts including successful and failed logins.",Security audit trail requirement
+REC_003,SYSAUTH00003,"The system shall [SYSAUTH00003] enforce password complexity requirements of minimum 8 characters.",Basic password policy
+REC_004,SYSNAV00001,"The system shall [SYSNAV00001] provide a main navigation menu accessible from all pages.",Core navigation functionality
+REC_005,SYSNAV00002,"The system shall [SYSNAV00002] display breadcrumb navigation for pages deeper than the main menu.",User orientation feature
+REC_006,SYSDATA00001,"The system shall [SYSDATA00001] backup all user data daily at 2:00 AM local time.",Data protection requirement
+REC_007,SYSDATA00002,"The system shall [SYSDATA00002] retain backup copies for a minimum of 30 days.",Backup retention policy
+REC_008,SYSRPT00001,"The system shall [SYSRPT00001] generate monthly usage reports for system administrators.",Basic reporting capability
+REC_009,SYSRPT00002,"The system shall [SYSRPT00002] export reports in PDF and CSV formats.",Report format flexibility
+REC_010,SYSPERF00001,"The system shall [SYSPERF00001] respond to user requests within 3 seconds under normal load.",Performance baseline requirement

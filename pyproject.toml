@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tracespec"
+version = "0.1.0"
+description = "A Git-backed requirement traceability system"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name="Phillip Gomez", email="gomez.phillip@gmail.com" }
+]
+license = { text = "MIT" }
+dependencies = [
+  "flask",
+  "docopt"
+]
+
+[project.scripts]
+tracespec = "tracespec.main:tracespec_main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["*"]
+
+[project.urls]
+Homepage = "https://github.com/fillet54/tracespec"
+Documentation = "https://github.com/fillet54/tracespec/wiki"

@@ -154,9 +154,10 @@ def get_requirements_by_subsystem(repo_dir, subsystem=None):
     else:
         # Load all subsystems
         for subsystem_folder in repo_dir.iterdir():
-            if subsystem_folder.is_dir():
+            if subsystem_folder.is_dir() and subsystem_folder.name != ".git":
                 subsystem_name = subsystem_folder.name
                 requirements[subsystem_name] = _load_subsystem_requirements(subsystem_folder)
+
     
     return requirements
 

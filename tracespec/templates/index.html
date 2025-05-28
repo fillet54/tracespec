@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block menucontent %}
+<div class="menu bg-base-200 rounded-box">
+    <div class="menu-title">
+        <span>Subsystems</span>
+    </div>
+
+    <div id="subsystem-nav">
+        {% for subsystem, count in subsystems.items() %}
+        <li>
+            <a hx-get="/subsystem/{{ subsystem }}"
+               hx-target="#requirements-list"
+               class="{% if loop.first %}active{% endif %}">
+                {{ subsystem.upper() }}
+                <div class="badge badge-secondary">{{ count }}</div>
+            </a>
+        </li>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="flex flex-col h-full">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold">Requirements Navigator</h1>
+        <p class="text-base-content/70 mt-2">Browse requirements organized by subsystem</p>
+    </div>
+
+    <div id="requirements-list" class="flex-1">
+        {% if selected_subsystem %}
+            {% include "requirements_list.html" %}
+        {% else %}
+        <div class="hero min-h-[400px]">
+            <div class="hero-content text-center">
+                <div class="max-w-md">
+                    <h2 class="text-2xl font-bold">Select a Subsystem</h2>
+                    <p class="py-6">Choose a subsystem from the navigation menu to view its requirements.</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

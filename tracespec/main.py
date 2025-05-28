@@ -19,6 +19,8 @@ from docopt import docopt
 
 from .ingest import ingest_csv
 
+REPO_DIR = Path(__file__).parent.resolve() / "../app-data/repo"
+
 def tracespec_main():
     args = docopt(__doc__)
 
@@ -31,8 +33,7 @@ def tracespec_main():
 
     elif args['ingest']:
         csvfile = args['<csvfile>']
-        ingest_csv(csvfile)
-        print(f"Ingested: {csvfile}")
+        ingest_csv(csvfile, REPO_DIR)
 
 if __name__ == '__main__':
     tracespec_main()

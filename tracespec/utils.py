@@ -2,8 +2,10 @@ import re
 from typing import Optional
 import subprocess
 
+from pathlib import Path
 
-def git_commit(filepath: str, message: str):
+
+def git_commit(filepath: str, message: str, cwd: Path):
     """
     Add the specified file to Git and commit it with a message.
     
@@ -11,10 +13,10 @@ def git_commit(filepath: str, message: str):
         filepath (str): Path to the file relative to the Git repo root.
         message (str): Commit message.
     """
-    subprocess.run(["git", "add", filepath], cwd="requirements_repo", check=True)
-    subprocess.run(["git", "commit", "-m", message], cwd="requirements_repo", check=True)
+    subprocess.run(["git", "add", filepath], cwd=cwd, check=True)
+    subprocess.run(["git", "commit", "-m", message], cwd=cwd, check=True)
 
-def git_diff(filepath: str, commit1: str, commit2: str) -> str:
+def git_diff(filepath: str, commit1: str, commit2: str, cwd: Path) -> str:
     """
     Return the diff of a file between two Git commits.
     
@@ -28,14 +30,14 @@ def git_diff(filepath: str, commit1: str, commit2: str) -> str:
     """
     result = subprocess.run(
         ["git", "diff", commit1, commit2, "--", filepath],
-        cwd="requirements_repo",
+        cwd=cwd,
         capture_output=True,
         text=True,
         check=True
     )
     return result.stdout
 
-def git_show_file(filepath: str, commit: str) -> str:
+def git_show_file(filepath: str, commit: str, cwd: Path) -> str:
     """
     Retrieve the content of a file at a specific Git commit.
     
@@ -49,7 +51,7 @@ def git_show_file(filepath: str, commit: str) -> str:
     full_path = f"{commit}:{filepath}"
     result = subprocess.run(
         ["git", "show", full_path],
-        cwd="requirements_repo",
+        cwd=cwd,
         capture_output=True,
         text=True,
         check=True

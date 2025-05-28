@@ -1,49 +1,30 @@
+import os
 from flask import Flask, request, render_template, jsonify
 from pathlib import Path
-import csv
 import json
 
 from .utils import git_diff, git_show_file, extract_subsystem
 from .ingest import ingest_csv, get_requirements_by_subsystem
 
 app = Flask(__name__)
-REPO_DIR = Path("requirements_repo/requirements")
+# Use absolute path relative to the project root
+REPO_DIR = Path(__file__).parent.parent / "requirements_repo" / "requirements"
 
 def resolve_filepath(req_id: str) -> Path:
     """Derive subsystem from req_id and construct file path."""
-    subsystem = req_id.split('-')[0].lower()
-    return REPO_DIR / subsystem / f"{req_id}.json"
+    subsystem = extract_subsystem(req_id)
+    if not subsystem:
+        raise ValueError(f"Cannot extract subsystem from requirement ID: {req_id}")
+    return REPO_DIR / subsystem.lower() / f"{req_id}.json"
 
-def load_requirements_from_csv():
-    """Load requirements from the test CSV for demo purposes."""
-    requirements = {}
-    csv_path = Path("test/data/requirements_v1.csv")
-
-    if not csv_path.exists():
-        return requirements
-
-    with open(csv_path, 'r', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            req_id = row['requirement_id']
-            subsystem = extract_subsystem(req_id)
-            if subsystem:
-                subsystem_lower = subsystem.lower()
-                if subsystem_lower not in requirements:
-                    requirements[subsystem_lower] = []
-                requirements[subsystem_lower].append({
-                    'record_id': row['record_id'],
-                    'requirement_id': req_id,
-                    'requirement_text': row['requirement_text'],
-                    'notes': row['notes']
-                })
-
-    return requirements
+def load_requirements_from_repo():
+    """Load requirements from the git repository structure."""
+    return get_requirements_by_subsystem(REPO_DIR)
 
 @app.route("/")
 def index():
     """Main requirements navigator page."""
-    requirements = load_requirements_from_csv()
+    requirements = load_requirements_from_repo()
     subsystems = {k: len(v) for k, v in requirements.items()}
     return render_template('index.html',
                          subsystems=subsystems,
@@ -52,7 +33,7 @@ def index():
 @app.route("/subsystem/<subsystem>")
 def view_subsystem(subsystem):
     """View requirements for a specific subsystem."""
-    requirements = load_requirements_from_csv()
+    requirements = load_requirements_from_repo()
     subsystem_reqs = requirements.get(subsystem.lower(), [])
     return render_template('requirements_list.html',
                          subsystem=subsystem,
@@ -61,7 +42,7 @@ def view_subsystem(subsystem):
 @app.route("/requirement/<req_id>")
 def view_requirement_detail(req_id):
     """View detailed information for a specific requirement."""
-    requirements = load_requirements_from_csv()
+    requirements = load_requirements_from_repo()
 
     # Find the requirement across all subsystems
     for subsystem_reqs in requirements.values():
@@ -98,16 +79,20 @@ def view_latest(req_id):
 @app.route("/requirements/<req_id>/<commit>")
 def view_version(req_id, commit):
     """Return the specified version of the requirement from Git."""
-    subsystem = req_id.split('-')[0].lower()
-    filepath = f"requirements/{subsystem}/{req_id}.json"
+    subsystem = extract_subsystem(req_id)
+    if not subsystem:
+        return "Invalid requirement ID format", 400
+    filepath = f"requirements/{subsystem.lower()}/{req_id}.json"
     content = git_show_file(filepath, commit, REPO_DIR)
     return content, 200, {"Content-Type": "application/json"}
 
 @app.route("/requirements/<req_id>/diff/<commit1>/<commit2>")
 def diff_view(req_id, commit1, commit2):
     """Show a diff between two versions of the requirement."""
-    subsystem = req_id.split('-')[0].lower()
-    filepath = f"requirements/{subsystem}/{req_id}.json"
+    subsystem = extract_subsystem(req_id)
+    if not subsystem:
+        return "Invalid requirement ID format", 400
+    filepath = f"requirements/{subsystem.lower()}/{req_id}.json"
     diff = git_diff(filepath, commit1, commit2, REPO_DIR)
     return f"<pre>{diff}</pre>"
 

@@ -20,7 +20,7 @@ from docopt import docopt
 from .app import app
 from .ingest import ingest_csv
 
-REPO_DIR = Path("requirements_repo/requirements")
+REPO_DIR = Path(__file__).parent.parent / "requirements_repo" / "requirements"
 
 def tracespec_main():
     args = docopt(__doc__)

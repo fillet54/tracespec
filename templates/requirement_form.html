@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit' if requirement else 'New' }} Requirement - TraceSpec{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">{{ 'Edit' if requirement else 'New' }} Requirement</h1>
+
+    <form {% if requirement %}hx-post="/requirement/{{ requirement.id }}/edit"{% else %}hx-post="/requirement/new"{% endif %}
+          hx-target="#main-content"
+          hx-push-url="/"
+          class="space-y-6">
+
+        <div class="form-control">
+            <label class="label">
+                <span class="label-text font-medium">Title</span>
+            </label>
+            <input type="text"
+                   name="title"
+                   placeholder="Enter requirement title"
+                   value="{{ requirement.title if requirement else '' }}"
+                   class="input input-bordered w-full"
+                   required>
+        </div>
+
+        <div class="form-control">
+            <label class="label">
+                <span class="label-text font-medium">Priority</span>
+            </label>
+            <select name="priority" class="select select-bordered w-full">
+                <option value="low" {{ 'selected' if requirement and requirement.priority == 'low' else '' }}>Low</option>
+                <option value="medium" {{ 'selected' if requirement and requirement.priority == 'medium' else '' }}>Medium</option>
+                <option value="high" {{ 'selected' if requirement and requirement.priority == 'high' else '' }}>High</option>
+            </select>
+        </div>
+
+        <div class="form-control">
+            <label class="label">
+                <span class="label-text font-medium">Description</span>
+            </label>
+            <textarea name="description"
+                      placeholder="Enter detailed requirement description"
+                      class="textarea textarea-bordered h-32 w-full"
+                      required>{{ requirement.description if requirement else '' }}</textarea>
+        </div>
+
+        <div class="flex gap-4 pt-4">
+            <button type="submit" class="btn btn-primary flex-1">
+                {{ 'Update' if requirement else 'Create' }} Requirement
+            </button>
+            <button type="button"
+                    class="btn btn-outline"
+                    hx-get="/"
+                    hx-target="#main-content"
+                    hx-push-url="true">
+                Cancel
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

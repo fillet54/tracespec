@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Requirements - TraceSpec{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold">Requirements</h1>
+    <a href="/requirement/new"
+       class="btn btn-primary"
+       hx-get="/requirement/new"
+       hx-target="#main-content"
+       hx-push-url="true">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        New Requirement
+    </a>
+</div>
+
+<div id="main-content">
+    {% include 'requirements_list.html' %}
+</div>
+{% endblock %}

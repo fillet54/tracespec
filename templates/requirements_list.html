@@ -1,0 +1,89 @@
+{% for requirement in requirements %}
+<div class="card bg-base-100 shadow-xl mb-4">
+    <div class="card-body">
+        <div class="flex justify-between items-start">
+            <div class="flex-1">
+                <h2 class="card-title text-xl mb-2">
+                    {{ requirement.title }}
+                    <div class="badge badge-{{ 'error' if requirement.priority == 'high' else 'warning' if requirement.priority == 'medium' else 'success' }}">
+                        {{ requirement.priority | title }}
+                    </div>
+                </h2>
+                <p class="text-base-content/70 mb-4">{{ requirement.description[:200] }}{% if requirement.description|length > 200 %}...{% endif %}</p>
+
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <div class="badge badge-outline">ID: {{ requirement.id }}</div>
+                    <div class="badge badge-outline">Status: {{ requirement.status | title }}</div>
+                    {% if requirement.updated_at %}
+                    <div class="badge badge-outline">Updated: {{ requirement.updated_at[:10] }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card-actions justify-between items-center">
+            <div class="flex gap-2">
+                {% if requirement.history and requirement.history|length > 0 %}
+                <div class="dropdown">
+                    <div tabindex="0" role="button" class="btn btn-outline btn-sm">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012-2m-6 9l2 2 4-4"></path>
+                        </svg>
+                        View Changes ({{ requirement.history|length }})
+                    </div>
+                    <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-80">
+                        {% for i in range(requirement.history|length) %}
+                        <li>
+                            <button class="text-left"
+                                    hx-get="/requirement/{{ requirement.id }}/diff/{{ i }}"
+                                    hx-target="#diff_content">
+                                <div class="flex justify-between w-full">
+                                    <span>Version {{ requirement.history|length - i }}</span>
+                                    <span class="text-xs text-base-content/50">{{ requirement.history[i].updated_at[:10] }}</span>
+                                </div>
+                            </button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="flex gap-2">
+                <button class="btn btn-outline btn-sm"
+                        hx-get="/requirement/{{ requirement.id }}"
+                        hx-target="#main-content"
+                        hx-push-url="true">
+                    View Details
+                </button>
+                <button class="btn btn-primary btn-sm"
+                        hx-get="/requirement/{{ requirement.id }}/edit"
+                        hx-target="#main-content"
+                        hx-push-url="true">
+                    Edit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% if not requirements %}
+<div class="text-center py-12">
+    <div class="hero">
+        <div class="hero-content text-center">
+            <div class="max-w-md">
+                <h1 class="text-2xl font-bold text-base-content/50">No Requirements Yet</h1>
+                <p class="py-6 text-base-content/70">Get started by creating your first requirement.</p>
+                <a href="/requirement/new"
+                   class="btn btn-primary"
+                   hx-get="/requirement/new"
+                   hx-target="#main-content"
+                   hx-push-url="true">
+                    Create First Requirement
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}

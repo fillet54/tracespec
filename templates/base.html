@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TraceSpec{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.8"></script>
+</head>
+<body class="min-h-screen bg-base-100">
+    <div class="navbar bg-primary text-primary-content shadow-lg">
+        <div class="flex-1">
+            <a class="btn btn-ghost text-xl" href="/">TraceSpec</a>
+        </div>
+        <div class="flex-none">
+            <ul class="menu menu-horizontal px-1">
+                <li><a href="/" class="hover:bg-primary-focus">Requirements</a></li>
+                <li><a href="/requirement/new" class="hover:bg-primary-focus">New Requirement</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Modal for diffs -->
+    <dialog id="diff_modal" class="modal">
+        <div class="modal-box w-11/12 max-w-5xl max-h-screen">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="font-bold text-lg mb-4">Requirement Changes</h3>
+            <div id="diff_content" class="overflow-auto max-h-96 font-mono text-sm bg-base-200 p-4 rounded">
+                <!-- Diff content will be loaded here -->
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
+    <script>
+        // Handle diff modal
+        document.addEventListener('htmx:afterRequest', function(evt) {
+            if (evt.detail.target.id === 'diff_content') {
+                document.getElementById('diff_modal').showModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}{{ requirement.title }} - TraceSpec{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-start mb-6">
+        <div>
+            <h1 class="text-3xl font-bold mb-2">{{ requirement.title }}</h1>
+            <div class="flex gap-2 mb-4">
+                <div class="badge badge-outline">ID: {{ requirement.id }}</div>
+                <div class="badge badge-{{ 'error' if requirement.priority == 'high' else 'warning' if requirement.priority == 'medium' else 'success' }}">
+                    {{ requirement.priority | title }}
+                </div>
+                <div class="badge badge-outline">{{ requirement.status | title }}</div>
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <button class="btn btn-primary"
+                    hx-get="/requirement/{{ requirement.id }}/edit"
+                    hx-target="#main-content"
+                    hx-push-url="true">
+                Edit
+            </button>
+            <button class="btn btn-outline"
+                    hx-get="/"
+                    hx-target="#main-content"
+                    hx-push-url="true">
+                Back to List
+            </button>
+        </div>
+    </div>
+
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title mb-4">Description</h2>
+            <div class="prose max-w-none">
+                <p class="whitespace-pre-wrap">{{ requirement.description }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-6 flex justify-between items-center text-sm text-base-content/70">
+        <div>Created: {{ requirement.created_at[:19].replace('T', ' ') }}</div>
+        {% if requirement.updated_at != requirement.created_at %}
+        <div>Last Updated: {{ requirement.updated_at[:19].replace('T', ' ') }}</div>
+        {% endif %}
+    </div>
+
+    {% if requirement.history and requirement.history|length > 0 %}
+    <div class="mt-8">
+        <h2 class="text-2xl font-bold mb-4">Change History</h2>
+        <div class="space-y-2">
+            {% for i in range(requirement.history|length) %}
+            <div class="flex items-center justify-between p-4 bg-base-200 rounded-lg">
+                <div>
+                    <span class="font-medium">Version {{ requirement.history|length - i + 1 }}</span>
+                    <span class="text-base-content/70 ml-2">{{ requirement.history[i].updated_at[:19].replace('T', ' ') }}</span>
+                </div>
+                <button class="btn btn-outline btn-sm"
+                        hx-get="/requirement/{{ requirement.id }}/diff/{{ i }}"
+                        hx-target="#diff_content">
+                    View Changes
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

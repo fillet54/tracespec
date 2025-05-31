@@ -9,6 +9,6 @@ if __name__ == "__main__":
 
     # Default to serve if no args provided
     if len(sys.argv) == 1:
-        sys.argv.extend(['serve', '--debug'])
+        sys.argv.extend(['serve', '--debug', "--port", "8081"])
 
     tracespec_main()
